@@ -1,0 +1,5 @@
+Flask
+Librosa
+Tensorflow
+Keras
+numpy
