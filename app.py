@@ -22,7 +22,7 @@ from gevent.pywsgi import WSGIServer
 app = Flask(__name__)
 
 
-Model= load_model('C:/Users/acer/Desktop/skin cancer classification/model/modelmobile.h5')     
+Model= load_model('model/modelmobile.h5')     
 
 class_labels=['Melanocytic nevi','Melanoma','Benign keratosis-like lesions ','Basal cell carcinoma','Actinic keratoses','Vascular lesions','Dermatofibroma']
 '''lesion_classes_dict = {
