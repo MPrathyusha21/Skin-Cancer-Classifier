@@ -19,13 +19,13 @@ from flask import Flask, redirect, url_for, request, render_template
 from werkzeug.utils import secure_filename
 from gevent.pywsgi import WSGIServer
 
-app = Flask(__name__, template_folder='C:/skin cancer 4-2 dl prj/template/', static_folder='C:/skin cancer 4-2 dl prj/static/')
+app = Flask(__name__)
 
 
-Model= load_model('C:/skin cancer 4-2 dl prj/models/model_SC.h5')     
+Model= load_model('C:/Users/acer/Desktop/skin cancer classification/model/modelmobile.h5')     
 
-
-lesion_classes_dict = {
+class_labels=['Melanocytic nevi','Melanoma','Benign keratosis-like lesions ','Basal cell carcinoma','Actinic keratoses','Vascular lesions','Dermatofibroma']
+'''lesion_classes_dict = {
     0 : 'Melanocytic nevi',
     1 : 'Melanoma',
     2 : 'Benign keratosis-like lesions ',
@@ -34,12 +34,13 @@ lesion_classes_dict = {
     5 : 'Vascular lesions',
     6 : 'Dermatofibroma'
 }
-
+'''
 
 
 def model_predict(img_path, Model):
+    class_labels=['Melanocytic nevi','Melanoma','Benign keratosis-like lesions ','Basal cell carcinoma','Actinic keratoses','Vascular lesions','Dermatofibroma']
     #img = image.load_img(img_path, target_size=(32,32,3))        #for model203pfm
-    img = image.load_img(img_path, target_size=(90,120,3))
+    img = image.load_img(img_path, target_size=(224,224,3))
   
     #img = np.asarray(pil_image.open('img').resize((120,90)))
     #x = np.asarray(img.tolist())
@@ -50,9 +51,20 @@ def model_predict(img_path, Model):
     # Be careful how your trained model deals with the input
     # otherwise, it won't make correct prediction!
     #x = preprocess_input(x, mode='caffe')
-
-    preds = Model.predict(x)[0][0]
-    return preds
+    preds = Model.predict(x)[0]
+    pred=preds
+    pred[pred.argmax()]=np.min(preds)
+    print(np.argmax(pred))
+    print(preds)
+    print(preds.argmax())
+    label=class_labels[preds.argmax()]
+    print(label)
+    #img = image.load_img(img_path, target_size=(48, 48))
+ 
+    # Preprocessing the image
+    
+ 
+    return label
 
 
 @app.route('/', methods=['GET'])
@@ -70,21 +82,22 @@ def upload():
         # Save the file to ./uploads
         basepath = os.path.dirname(__file__)
         file_path = os.path.join(
-            basepath, 'uploads', secure_filename(f.filename))
+            basepath, 'upload', secure_filename(f.filename))
         f.save(file_path)
         print(file_path)
         # Make prediction
         preds = model_predict(file_path , Model)
 
         # Process your result for human
-        
+        '''pred_class=[]
 
         pred_class = preds.argmax(axis=-1)            # Simple argmax
         #pred_class = decode_predictions(preds, top=1)   
-        pr = lesion_classes_dict[pred_class]
+        pr = lesion_classes_dict[pred_class[0]]
         result =str(pr)
         print(pred_class)
-        return result
+        return result'''
+        return preds
     return None
 
 

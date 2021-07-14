@@ -1,5 +1,4 @@
 Flask
-Librosa
-Tensorflow
+Tensorflow==2.4.1
 Keras
 numpy
