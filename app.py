@@ -12,14 +12,13 @@ from tensorflow.keras.models import Model , load_model
 from keras.preprocessing import image
 
 # Flask utils
-from flask import Flask, redirect, url_for, request, render_template
+from flask import Flask, request, render_template
 from werkzeug.utils import secure_filename
-from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
 
 
-Model= load_model('model/modelmobile.h5')     
+Model= load_model('model/model.h5')     
 
 class_labels=['Melanocytic nevi','Melanoma','Benign keratosis-like lesions ','Basal cell carcinoma','Actinic keratoses','Vascular lesions','Dermatofibroma']
  
@@ -37,8 +36,6 @@ def model_predict(img_path, Model):
     pred=preds
     pred[pred.argmax()]=np.min(preds)
     label=class_labels[preds.argmax()]
-    print(label)
-
     return label
 
 
@@ -59,7 +56,6 @@ def upload():
         file_path = os.path.join(
             basepath, 'upload', secure_filename(f.filename))
         f.save(file_path)
-        print(file_path)
         # Make prediction
         preds = model_predict(file_path , Model)
 
